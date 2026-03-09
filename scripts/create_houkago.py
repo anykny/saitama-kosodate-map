@@ -17,8 +17,8 @@ BASE_DIR = Path(__file__).parent.parent  # scripts/ の親ディレクトリ
 CLUB_CSV = BASE_DIR / "opendata" / "111007_hokagojidoclub250401.csv"
 IBASHO_CSV = BASE_DIR / "opendata" / "111007_ibasho250401.csv"
 OUTPUT_CSV = BASE_DIR / "csv" / "houkago_geo.csv"
-OUTPUT_HTML = BASE_DIR / "output" / "houkago.html"
-PORTAL_HTML = BASE_DIR / "output" / "portal.html"
+OUTPUT_HTML = BASE_DIR / "docs" / "houkago.html"
+PORTAL_HTML = BASE_DIR / "docs" / "portal.html"
 
 # さいたま市の区一覧
 WARDS = ["西区", "北区", "大宮区", "見沼区", "中央区", "桜区", "浦和区", "南区", "緑区", "岩槻区"]

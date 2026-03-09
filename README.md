@@ -9,15 +9,16 @@
 ```
 saitama_hattatsu_map/
 │
-├── portal.html                  # トップページ（全カテゴリへのリンク）
-├── index.html                   # 1. 発達障害 医療機関（56件）
-├── juku.html                    # 2. 補習塾・学習支援（17件）
-├── dayservice.html              # 3. 放課後デイ・児童発達支援（168件）
-├── clinics.html                 # 4. 小児科・皮膚科・耳鼻科・眼科（361件）
-├── naraigoto.html               # 5. 習い事教室（129件）
-├── juku_shingaku.html           # 6. 進学塾・学習塾（183件）
-├── schools.html                 # 7. 保育園・幼稚園・学校（890件）
-├── houkago.html                 # 8. 放課後児童クラブ・居場所（337件）
+├── docs/                        # HTMLページ（GitHub Pages公開用）
+│   ├── portal.html              #   トップページ（全カテゴリへのリンク）
+│   ├── index.html               #   1. 発達障害 医療機関（56件）
+│   ├── juku.html                #   2. 補習塾・学習支援（17件）
+│   ├── dayservice.html          #   3. 放課後デイ・児童発達支援（168件）
+│   ├── clinics.html             #   4. 小児科・皮膚科・耳鼻科・眼科（361件）
+│   ├── naraigoto.html           #   5. 習い事教室（129件）
+│   ├── juku_shingaku.html       #   6. 進学塾・学習塾（183件）
+│   ├── schools.html             #   7. 保育園・幼稚園・学校（890件）
+│   └── houkago.html             #   8. 放課後児童クラブ・居場所（337件）
 ├── README.md
 │
 ├── csv/                         # Google My Maps用CSV（全て緯度/経度付き、utf-8-sig）

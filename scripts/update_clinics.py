@@ -16,7 +16,7 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 INPUT_FILE = os.path.join(BASE_DIR, 'opendata/111007_hospital_20260131.csv')
 OUTPUT_CSV = os.path.join(BASE_DIR, 'csv/clinics_geo.csv')
-HTML_FILE = os.path.join(BASE_DIR, 'output/clinics.html')
+HTML_FILE = os.path.join(BASE_DIR, 'docs/clinics.html')
 
 # 対象診療科の省略形マッピング
 # データでは「小」=小児科、「皮」=皮膚科、「眼」=眼科、「耳」=耳鼻咽喉科 等の省略形

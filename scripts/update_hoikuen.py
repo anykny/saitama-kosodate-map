@@ -47,7 +47,7 @@ SHUBETSU_MAP = {
 
 # 出力ファイル
 OUTPUT_CSV = BASE_DIR / "csv" / "hoikuen_geo.csv"
-SCHOOLS_HTML = BASE_DIR / "output" / "schools.html"
+SCHOOLS_HTML = BASE_DIR / "docs" / "schools.html"
 SCHOOLS_CSV = BASE_DIR / "csv" / "schools_all_geo.csv"
 
 
