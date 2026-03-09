@@ -1,0 +1,13 @@
+# グローバル .gitignore の *.csv 除外を解除
+!csv/*.csv
+
+# ソースデータ（大容量）
+opendata/
+archive/
+intermediate/
+
+# macOS
+.DS_Store
+
+# 整理スクリプト（不要）
+organize.sh

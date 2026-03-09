@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>さいたま市 発達支援リソースまとめ</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:"Hiragino Kaku Gothic ProN","Meiryo",sans-serif;background:#f5f5f5;color:#333}
+    .hero{background:linear-gradient(135deg,#1a5276,#2980b9);color:#fff;padding:40px 24px;text-align:center}
+    .hero h1{font-size:1.5rem;margin-bottom:8px}
+    .hero p{font-size:.88rem;opacity:.85}
+    .container{max-width:800px;margin:24px auto;padding:0 16px}
+    .card{background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.1);padding:24px;margin-bottom:20px;border-left:6px solid #1a5276;transition:.2s}
+    .card:hover{box-shadow:0 4px 16px rgba(0,0,0,.16);transform:translateY(-2px)}
+    .card h2{font-size:1.1rem;margin-bottom:8px;color:#1a5276}
+    .card .desc{font-size:.88rem;color:#555;line-height:1.6;margin-bottom:12px}
+    .card .stats{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:12px}
+    .stat{text-align:center}
+    .stat .num{font-size:1.4rem;font-weight:bold;color:#1a5276}
+    .stat .label{font-size:.72rem;color:#999}
+    .card a.link{display:inline-block;padding:8px 20px;background:#1a5276;color:#fff;border-radius:6px;text-decoration:none;font-size:.88rem}
+    .card a.link:hover{background:#154360}
+    .card a.csv{margin-left:8px;padding:8px 16px;background:#27ae60;color:#fff;border-radius:6px;text-decoration:none;font-size:.82rem}
+    .card a.csv:hover{background:#1e8449}
+    .card.medical{border-left-color:#8e44ad}
+    .card.juku{border-left-color:#e67e22}
+    .card.dayservice{border-left-color:#27ae60}
+    .card.clinics{border-left-color:#0e6655}
+    .card.naraigoto{border-left-color:#c0392b}
+    .card.juku-shingaku{border-left-color:#1565c0}
+    .card.schools{border-left-color:#2c3e50}
+    .card.houkago{border-left-color:#d35400}
+    .note{background:#fef9e7;border:1px solid #f0c040;border-radius:8px;padding:12px 16px;font-size:.82rem;line-height:1.6;color:#555;margin-bottom:20px}
+    footer{text-align:center;padding:24px;font-size:.78rem;color:#999}
+  </style>
+</head>
+<body>
+<div class="hero">
+  <h1>さいたま市 子育て・教育リソースまとめ</h1>
+  <p>医療機関・療育・学習支援・習い事・保育園/学校を1か所にまとめています</p>
+</div>
+<div class="container">
+  <div class="note">
+    すべてのリストにはGoogle マップリンクが付いています。
+    CSVファイルを<a href="https://www.google.com/mymaps" target="_blank">Google My Maps</a>にインポートすると、費用情報付きのオリジナル地図が作れます。
+  </div>
+
+  <div class="card medical">
+    <h2>1. 発達障害 医療機関（診断・評価）</h2>
+    <div class="desc">
+      埼玉県公式「発達障害医療機関リスト」さいたま市分の全件。
+      診断・知能検査・投薬・療法など対応内容、対象年齢、カテゴリ別フィルター付き。
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="num">56</div><div class="label">全機関</div></div>
+      <div class="stat"><div class="num">30</div><div class="label">小児対応</div></div>
+      <div class="stat"><div class="num">3</div><div class="label">療育センター</div></div>
+    </div>
+    <a class="link" href="index.html">一覧を見る</a>
+    <a class="csv" href="../csv/facilities.csv" download>CSV (My Maps用)</a>
+  </div>
+
+  <div class="card juku">
+    <h2>2. 補習塾・学習支援（小学生以降）</h2>
+    <div class="desc">
+      発達障害専門塾、学習支援型放課後デイ、地域密着型個別指導塾、大手チェーン塾。
+      費用目安・特徴比較表付き。
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="num">17</div><div class="label">全教室</div></div>
+      <div class="stat"><div class="num">5</div><div class="label">放課後デイ</div></div>
+      <div class="stat"><div class="num">3</div><div class="label">地域密着</div></div>
+      <div class="stat"><div class="num">8</div><div class="label">大手チェーン</div></div>
+    </div>
+    <a class="link" href="juku.html">一覧を見る</a>
+    <a class="csv" href="../csv/juku.csv" download>CSV (My Maps用)</a>
+  </div>
+
+  <div class="card dayservice">
+    <h2>3. 放課後デイ・児童発達支援（民間療育）</h2>
+    <div class="desc">
+      さいたま市公式リスト全件。区・サービス種別・療育プログラム（学習支援/SST/運動/言語/個別/親支援）で絞り込み可能。
+      費用は受給者証利用で月上限4,600円。
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="num">168</div><div class="label">全事業所</div></div>
+      <div class="stat"><div class="num">108</div><div class="label">学習支援</div></div>
+      <div class="stat"><div class="num">132</div><div class="label">SST</div></div>
+      <div class="stat"><div class="num">138</div><div class="label">運動療育</div></div>
+      <div class="stat"><div class="num">92</div><div class="label">言語</div></div>
+    </div>
+    <a class="link" href="dayservice.html">一覧を見る</a>
+    <a class="csv" href="../csv/dayservice.csv" download>CSV (My Maps用)</a>
+  </div>
+
+  <div class="card clinics">
+    <h2>4. 小児科・皮膚科・耳鼻科・眼科</h2>
+    <div class="desc">
+      さいたま市オープンデータ（2026年1月31日時点）の医療機関から対象診療科を抽出。
+      診療科・区で絞り込み可能。Google Maps リンク付き。
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="num">361</div><div class="label">全施設</div></div>
+      <div class="stat"><div class="num">70</div><div class="label">小児科</div></div>
+      <div class="stat"><div class="num">144</div><div class="label">皮膚科</div></div>
+      <div class="stat"><div class="num">84</div><div class="label">耳鼻咽喉科</div></div>
+      <div class="stat"><div class="num">103</div><div class="label">眼科</div></div>
+    </div>
+    <a class="link" href="clinics.html">一覧を見る</a>
+    <a class="csv" href="../csv/clinics_geo.csv" download>CSV (My Maps用)</a>
+  </div>
+
+  <div class="card naraigoto">
+    <h2>5. 習い事教室（幼児〜成人）</h2>
+    <div class="desc">
+      スイミング・英語・プログラミング・そろばん・音楽・体操・サッカー・武道・ダンス・書道の10ジャンル。
+      ジャンル・区・対象年齢で絞り込み可能。
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="num">129</div><div class="label">全教室</div></div>
+      <div class="stat"><div class="num">13</div><div class="label">スイミング</div></div>
+      <div class="stat"><div class="num">15</div><div class="label">プログラミング</div></div>
+      <div class="stat"><div class="num">17</div><div class="label">武道</div></div>
+      <div class="stat"><div class="num">10</div><div class="label">ジャンル</div></div>
+    </div>
+    <a class="link" href="naraigoto.html">一覧を見る</a>
+    <a class="csv" href="../csv/naraigoto_geo.csv" download>CSV (My Maps用)</a>
+  </div>
+
+  <div class="card juku-shingaku">
+    <h2>6. 進学塾・学習塾</h2>
+    <div class="desc">
+      中学受験・高校受験・大学受験の進学塾、個別指導塾、公文式・学研教室。
+      カテゴリ・区で絞り込み可能。
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="num">183</div><div class="label">全教室</div></div>
+      <div class="stat"><div class="num">13</div><div class="label">中学受験</div></div>
+      <div class="stat"><div class="num">39</div><div class="label">高校受験</div></div>
+      <div class="stat"><div class="num">34</div><div class="label">個別指導</div></div>
+      <div class="stat"><div class="num">64</div><div class="label">公文式</div></div>
+      <div class="stat"><div class="num">22</div><div class="label">大学受験</div></div>
+    </div>
+    <a class="link" href="juku_shingaku.html">一覧を見る</a>
+    <a class="csv" href="../csv/juku_shingaku_geo.csv" download>CSV (My Maps用)</a>
+  </div>
+
+  <div class="card schools">
+    <h2>7. 保育園・幼稚園・学校</h2>
+    <div class="desc">
+      認可保育所・小規模保育・認可外保育・認定こども園・幼稚園・小学校・中学校・高校・特別支援学校。私立含む全件。
+      公立小中は知的固定・情緒固定の特別支援学級情報付き。
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="num">890</div><div class="label">全施設</div></div>
+      <div class="stat"><div class="num">275</div><div class="label">認可保育所</div></div>
+      <div class="stat"><div class="num">160</div><div class="label">小規模保育</div></div>
+      <div class="stat"><div class="num">98</div><div class="label">認可外保育</div></div>
+      <div class="stat"><div class="num">96</div><div class="label">幼稚園</div></div>
+      <div class="stat"><div class="num">108</div><div class="label">小学校</div></div>
+      <div class="stat"><div class="num">67</div><div class="label">中学校</div></div>
+      <div class="stat"><div class="num">46</div><div class="label">高校等</div></div>
+    </div>
+    <a class="link" href="schools.html">一覧を見る</a>
+    <a class="csv" href="../csv/schools_all_geo.csv" download>CSV (My Maps用)</a>
+  </div>
+
+  <div class="card houkago">
+    <h2>8. 放課後児童クラブ・居場所事業</h2>
+    <div class="desc">
+      さいたま市オープンデータ（令和7年4月1日時点）の放課後児童クラブ・放課後子ども居場所事業全件。
+      種別・区で絞り込み可能。Google Maps リンク付き。
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="num">337</div><div class="label">全施設</div></div>
+      <div class="stat"><div class="num">262</div><div class="label">民設クラブ</div></div>
+      <div class="stat"><div class="num">62</div><div class="label">公設クラブ</div></div>
+      <div class="stat"><div class="num">13</div><div class="label">子ども居場所</div></div>
+    </div>
+    <a class="link" href="houkago.html">一覧を見る</a>
+    <a class="csv" href="../csv/houkago_geo.csv" download>CSV (My Maps用)</a>
+  </div>
+</div>
+<footer>
+  さいたま市 発達支援リソースまとめ ― 2026年3月作成<br>
+  出典: 埼玉県発達障害医療機関リスト / さいたま市オープンデータ（医療機関・保育施設・放課後児童クラブ） / さいたま市障害児通所支援事業所サービス提供リスト / 各塾・教室公式サイト / 文部科学省学校コード
+</footer>
+</body>
+</html>

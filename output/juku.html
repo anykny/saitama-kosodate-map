@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>埼玉県さいたま市 補習塾・学習支援一覧</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
+      background: #f5f5f5; color: #333; font-size: 14px;
+    }
+    header { background: #1a5276; color: white; padding: 20px 24px; }
+    header h1 { font-size: 1.3rem; margin-bottom: 4px; }
+    header p  { font-size: 0.82rem; opacity: 0.85; }
+
+    .toolbar {
+      background: white; padding: 10px 24px;
+      display: flex; gap: 6px; flex-wrap: wrap;
+      border-bottom: 1px solid #ddd; align-items: center;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .toolbar span { font-size: 0.82rem; color: #555; margin-right: 2px; }
+    .filter-btn {
+      padding: 4px 12px; border: 1px solid #aaa; border-radius: 16px;
+      background: white; cursor: pointer; font-size: 0.78rem; transition: all 0.2s;
+    }
+    .filter-btn:hover { background: #eaf0fb; }
+    .filter-btn.active { background: #1a5276; color: white; border-color: #1a5276; }
+    .cnt { font-size: 0.7rem; background: #eee; border-radius: 8px; padding: 1px 5px; margin-left: 2px; }
+    .filter-btn.active .cnt { background: rgba(255,255,255,.3); }
+    .search-box {
+      margin-left: auto; padding: 5px 10px; border: 1px solid #ccc;
+      border-radius: 6px; font-size: 0.82rem; width: 180px;
+    }
+
+    .container { max-width: 1000px; margin: 16px auto; padding: 0 16px; }
+
+    .notice {
+      background: #fef9e7; border: 1px solid #f0c040; border-radius: 8px;
+      padding: 10px 14px; font-size: 0.8rem; line-height: 1.6;
+      margin-bottom: 14px; color: #555;
+    }
+    .notice a { color: #1a5276; }
+
+    .section-title {
+      font-size: 1rem; font-weight: bold; margin: 20px 0 10px;
+      padding-left: 10px; border-left: 4px solid #1a5276; color: #1a5276;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 12px; margin-bottom: 16px;
+    }
+
+    .card {
+      background: white; border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,.1);
+      padding: 14px; border-left: 4px solid #ccc;
+      transition: box-shadow 0.2s;
+    }
+    .card:hover { box-shadow: 0 3px 10px rgba(0,0,0,.16); }
+    .card.hidden { display: none; }
+
+    .card[data-cat="specialist"]  { border-left-color: #e67e22; }
+    .card[data-cat="afterschool"] { border-left-color: #27ae60; }
+    .card[data-cat="local"]       { border-left-color: #2980b9; }
+    .card[data-cat="chain"]       { border-left-color: #7f8c8d; }
+
+    .badge {
+      display: inline-block; font-size: 0.68rem; padding: 1px 8px;
+      border-radius: 10px; color: white; margin-bottom: 6px;
+    }
+    .badge-specialist  { background: #e67e22; }
+    .badge-afterschool { background: #27ae60; }
+    .badge-local       { background: #2980b9; }
+    .badge-chain       { background: #7f8c8d; }
+
+    .card h2 { font-size: 0.92rem; margin-bottom: 4px; line-height: 1.35; }
+    .card .info { font-size: 0.78rem; color: #555; margin-bottom: 3px; }
+    .card .features {
+      font-size: 0.78rem; color: #444; background: #f8f9fa;
+      border-radius: 4px; padding: 6px 8px; margin: 6px 0; line-height: 1.5;
+    }
+    .card .note { font-size: 0.73rem; color: #999; margin-bottom: 8px; }
+    .card .price-tag {
+      display: inline-block; font-size: 0.7rem; padding: 2px 8px;
+      background: #d5f5e3; border-radius: 4px; color: #1e8449; margin: 4px 0;
+    }
+    .btn-map {
+      display: inline-block; padding: 4px 12px;
+      background: #e8342a; color: white; border-radius: 5px;
+      text-decoration: none; font-size: 0.76rem;
+    }
+    .btn-map:hover { background: #c0392b; }
+
+    .comparison-table {
+      width: 100%; border-collapse: collapse; margin: 16px 0;
+      font-size: 0.8rem; background: white; border-radius: 8px;
+      overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.1);
+    }
+    .comparison-table th {
+      background: #1a5276; color: white; padding: 8px 10px;
+      text-align: left; font-weight: normal;
+    }
+    .comparison-table td { padding: 8px 10px; border-bottom: 1px solid #eee; }
+    .comparison-table tr:last-child td { border-bottom: none; }
+    .comparison-table tr:hover td { background: #f8f9fa; }
+
+    .ref-section {
+      margin-top: 28px; background: white; border-radius: 8px;
+      padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.1);
+    }
+    .ref-section h2 { font-size: 0.95rem; margin-bottom: 10px; color: #1a5276; }
+    .ref-section ul { font-size: 0.82rem; line-height: 2; padding-left: 20px; }
+
+    footer {
+      text-align: center; padding: 20px; font-size: 0.75rem; color: #999;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>埼玉県さいたま市 補習塾・学習支援一覧（小学生以降）</h1>
+  <p>学校授業フォロー・補習向けの塾を中心に、発達支援対応も含めてまとめています（2026年3月時点）</p>
+</header>
+
+<div class="toolbar">
+  <span>絞込:</span>
+  <button class="filter-btn active" onclick="applyFilter('all')">すべて<span class="cnt" id="cnt-all"></span></button>
+  <button class="filter-btn" onclick="applyFilter('specialist')">発達障害専門<span class="cnt" id="cnt-sp"></span></button>
+  <button class="filter-btn" onclick="applyFilter('afterschool')">放課後デイ（学習型）<span class="cnt" id="cnt-af"></span></button>
+  <button class="filter-btn" onclick="applyFilter('local')">地域密着塾<span class="cnt" id="cnt-lo"></span></button>
+  <button class="filter-btn" onclick="applyFilter('chain')">大手チェーン<span class="cnt" id="cnt-ch"></span></button>
+  <input type="text" class="search-box" placeholder="名前・住所で検索..." oninput="applySearch(this.value)">
+</div>
+
+<div class="container">
+
+  <div class="notice">
+    <strong>補習塾の選び方のポイント：</strong>
+    発達に特性のあるお子さんには、<strong>放課後等デイサービス（学習支援型）</strong>が受給者証取得で月額上限4,600円と費用面で有利です。
+    一般の補習塾を選ぶ場合は、<strong>個別指導</strong>で<strong>学校授業フォロー</strong>に対応しているかを確認してください。
+    体験授業を複数受けてから決めることをお勧めします。
+  </div>
+
+  <!-- カテゴリ比較表 -->
+  <table class="comparison-table">
+    <tr>
+      <th>タイプ</th>
+      <th>特徴</th>
+      <th>費用目安</th>
+      <th>こんな子に</th>
+    </tr>
+    <tr>
+      <td><span class="badge badge-specialist">発達障害専門</span></td>
+      <td>発達特性への理解・SST・学習支援の組み合わせ</td>
+      <td>月2〜4万円程度</td>
+      <td>診断あり/グレーゾーン・学校で困り感がある子</td>
+    </tr>
+    <tr>
+      <td><span class="badge badge-afterschool">放課後デイ</span></td>
+      <td>学習塾型の放課後等デイサービス・SST+宿題/補習</td>
+      <td>月上限4,600円（受給者証）</td>
+      <td>受給者証取得済み・費用を抑えたい・療育+学習</td>
+    </tr>
+    <tr>
+      <td><span class="badge badge-local">地域密着塾</span></td>
+      <td>少人数/完全個別・地元の学校事情に精通・柔軟な対応</td>
+      <td>月1〜3万円程度</td>
+      <td>学校の授業についていきたい・近所で通いやすい塾</td>
+    </tr>
+    <tr>
+      <td><span class="badge badge-chain">大手チェーン</span></td>
+      <td>教材/カリキュラムが体系化・振替しやすい・教室が多い</td>
+      <td>月1.5〜4万円程度</td>
+      <td>安定したカリキュラムがほしい・自宅近くで選びたい</td>
+    </tr>
+  </table>
+
+  <div class="card-grid" id="cardGrid"></div>
+
+  <div class="ref-section">
+    <h2>参考リンク</h2>
+    <ul>
+      <li><a href="https://onestep-academia.jp/" target="_blank">one step アカデミア（発達障害・グレーゾーン専門）</a></li>
+      <li><a href="https://arstia.co.jp/about" target="_blank">ソーシャルブレインズ（放課後デイ・学習支援）</a></li>
+      <li><a href="https://asport.link/" target="_blank">あすぽーと（学習支援型 放課後等デイサービス）</a></li>
+      <li><a href="https://shibahara-juku.jp/" target="_blank">芝原塾（緑区・個別指導）</a></li>
+      <li><a href="http://hiyori0051.jp/" target="_blank">個別学習塾ひより（大宮区・個別カリキュラム）</a></li>
+      <li><a href="https://koushinjuku.jp/" target="_blank">高進塾（北区・自立学習+個別）</a></li>
+      <li><a href="https://www.jyukunavi.jp/kobeturank/111.html" target="_blank">塾ナビ 埼玉県さいたま市 個別指導塾ランキング</a></li>
+      <li><a href="https://jukushiru.com/schools/prefecture/11/city/532/feature/developmentally_disabled_child" target="_blank">塾シル 埼玉県さいたま市 発達障害対応塾ランキング</a></li>
+      <li><a href="https://h-navi.jp/support_facility/saitama/regions/3/program/30" target="_blank">LITALICO発達ナビ 埼玉県さいたま市 学習支援型放課後デイ一覧</a></li>
+      <li><a href="https://www.city.saitama.lg.jp/002/003/002/p093678.html" target="_blank">埼玉県さいたま市 学習支援事業について（市公式）</a></li>
+    </ul>
+  </div>
+
+</div>
+
+<footer>
+  埼玉県さいたま市 補習塾・学習支援一覧 ― 2026年3月作成<br>
+  情報は変更される場合があります。利用前に必ず各教室へご確認ください。
+</footer>
+
+<script>
+const DATA = [
+  {
+    name: "one step アカデミア",
+    cat: "specialist", catLabel: "発達障害・グレーゾーン専門",
+    address: "埼玉県さいたま市中央区上落合2-5-35 八幡ビル2F",
+    tel: "",
+    target: "小学生〜高校生",
+    features: "講師:生徒=1:4の少人数クラス授業、家でマンツーマン授業を受けられるコースもあり。発達障害・グレーゾーンのお子さんの学習支援に特化。将来の可能性を広げる指導方針。",
+    cost: "月2〜4万円程度（コースにより異なる）",
+    note: "",
+    url: "https://onestep-academia.jp/"
+  },
+  {
+    name: "ソーシャルブレインズ 浦和西口教室",
+    cat: "afterschool", catLabel: "放課後デイ（学習支援型）",
+    address: "埼玉県さいたま市浦和区高砂3-10-3 八千代ビル3F",
+    tel: "048-767-3142",
+    target: "小学生〜高校生",
+    features: "放課後等デイサービス。体幹・脳幹トレーニング + SST + 個別学習支援。普通学級に通う発達障害・グレーゾーン児向け。",
+    cost: "月上限4,600円（受給者証利用）",
+    note: "受給者証が必要 / 月額上限4,600円",
+    url: "https://arstia.co.jp/"
+  },
+  {
+    name: "ソーシャルブレインズ 上木崎教室",
+    cat: "afterschool", catLabel: "放課後デイ（学習支援型）",
+    address: "埼玉県さいたま市浦和区上木崎4-9-11 横田ビル2F",
+    tel: "048-711-3019",
+    target: "小学生〜高校生",
+    features: "放課後等デイサービス。体幹・脳幹トレーニング + SST + 個別学習支援。",
+    cost: "月上限4,600円（受給者証利用）",
+    note: "受給者証が必要 / 月額上限4,600円",
+    url: "https://arstia.co.jp/"
+  },
+  {
+    name: "ソーシャルブレインズ 大宮東口教室",
+    cat: "afterschool", catLabel: "放課後デイ（学習支援型）",
+    address: "埼玉県さいたま市大宮区東町1-32-2 セレクト大宮東町ビル3F",
+    tel: "",
+    target: "小学生〜高校生",
+    features: "放課後等デイサービス。体幹・脳幹トレーニング + SST + 個別学習支援。",
+    cost: "月上限4,600円（受給者証利用）",
+    note: "受給者証が必要 / 月額上限4,600円",
+    url: "https://arstia.co.jp/"
+  },
+  {
+    name: "あすぽーと 東大宮教室",
+    cat: "afterschool", catLabel: "放課後デイ（学習支援型）",
+    address: "埼玉県さいたま市見沼区東大宮5-34-2",
+    tel: "048-797-6066",
+    target: "小学生〜高校生",
+    features: "学習塾運営ノウハウを活かした放課後等デイ。独自SST + 宿題サポート + 補習 + 受験指導。自閉症/ADHD/LDなど対応。",
+    cost: "月上限4,600円（受給者証利用）",
+    note: "受給者証が必要",
+    url: "https://asport.link/"
+  },
+  {
+    name: "あすぽーと 鉄道博物館教室",
+    cat: "afterschool", catLabel: "放課後デイ（学習支援型）",
+    address: "埼玉県さいたま市北区大成町4-125-1 ドゥエル石川1階",
+    tel: "048-788-3953",
+    target: "小学生〜高校生",
+    features: "学習塾運営ノウハウを活かした放課後等デイ。独自SST + 宿題サポート + 補習 + 受験指導。",
+    cost: "月上限4,600円（受給者証利用）",
+    note: "受給者証が必要",
+    url: "https://asport.link/"
+  },
+  {
+    name: "芝原塾",
+    cat: "local", catLabel: "地域密着型 個別指導",
+    address: "埼玉県さいたま市緑区芝原3-2-6-2F",
+    tel: "",
+    target: "小学生〜高校生",
+    features: "完全個別指導。学校授業フォロー・補習対応。「できた!」という感覚を大切にする指導。勉強への意識開拓と学習習慣づくり。",
+    cost: "月1〜3万円程度（学年・コマ数により異なる）",
+    note: "",
+    url: "https://shibahara-juku.jp/"
+  },
+  {
+    name: "個別学習塾ひより",
+    cat: "local", catLabel: "地域密着型 個別指導",
+    address: "埼玉県さいたま市大宮区北袋町2-496-4-101",
+    tel: "",
+    target: "小学生〜高校生",
+    features: "一人ひとりに合わせた個別カリキュラム。理解度に応じた難易度調整。小学生低学年は学童保育代わりにも利用可能。",
+    cost: "月1〜3万円程度（要問合せ）",
+    note: "",
+    url: "http://hiyori0051.jp/"
+  },
+  {
+    name: "高進塾",
+    cat: "local", catLabel: "地域密着型 個別指導",
+    address: "埼玉県さいたま市北区（宮原駅付近）",
+    tel: "",
+    target: "小学生〜高校生",
+    features: "自立学習 + 個別計画。学校授業フォロー。部活で忙しい子向けに土日も指導。目標達成に向けた個別計画を作成。",
+    cost: "月1〜3万円程度（要問合せ）",
+    note: "",
+    url: "https://koushinjuku.jp/"
+  },
+  {
+    name: "自立学習RED 大宮教室",
+    cat: "chain", catLabel: "大手チェーン",
+    address: "埼玉県さいたま市大宮区桜木町2-8-4 山下ビル3F",
+    tel: "",
+    target: "小学4年生〜高校生",
+    features: "正社員講師 + AIタブレットで個別最適化。予習型で学校の授業がわかるようになる。低料金が特徴。",
+    cost: "月4,900円〜（週1回・小学生）低料金が特徴",
+    note: "",
+    url: "https://www.jiritsu-red.jp/"
+  },
+  {
+    name: "自立学習RED 浦和教室",
+    cat: "chain", catLabel: "大手チェーン",
+    address: "埼玉県さいたま市浦和区高砂3-6-18 けやきビル5F",
+    tel: "",
+    target: "小学4年生〜高校生",
+    features: "正社員講師 + AIタブレットで個別最適化。予習型で学校の授業がわかるようになる。低料金が特徴。",
+    cost: "月4,900円〜（週1回・小学生）低料金が特徴",
+    note: "",
+    url: "https://www.jiritsu-red.jp/"
+  },
+  {
+    name: "森塾 大宮西口校",
+    cat: "chain", catLabel: "大手チェーン",
+    address: "埼玉県さいたま市大宮区桜木町（大宮駅徒歩4分）",
+    tel: "",
+    target: "小学3年生〜高校生",
+    features: "先生1人に生徒2人までの個別指導。成績保証制度（入塾後2学期以内にテスト成績アップ保証）。",
+    cost: "月5,400円〜（週1・小学生）中学生は月10,800円〜",
+    note: "",
+    url: "https://www.morijuku.com/school/omiyanishi/"
+  },
+  {
+    name: "森塾 南浦和校",
+    cat: "chain", catLabel: "大手チェーン",
+    address: "埼玉県さいたま市南区（南浦和駅近く）",
+    tel: "",
+    target: "小学3年生〜高校生",
+    features: "先生1人に生徒2人までの個別指導。成績保証制度。",
+    cost: "月5,400円〜（週1・小学生）中学生は月10,800円〜",
+    note: "",
+    url: "https://www.morijuku.com/"
+  },
+  {
+    name: "個別教室のトライ 北浦和駅前校",
+    cat: "chain", catLabel: "大手チェーン",
+    address: "埼玉県さいたま市浦和区（北浦和駅近く）",
+    tel: "",
+    target: "小学生〜高校生",
+    features: "完全マンツーマン指導。学校フォロー・定期テスト対策コースあり。地元校（本太中・木崎中等）に対応。",
+    cost: "月2〜4万円程度（学年・回数による）",
+    note: "",
+    url: "https://www.kobekyo.com/around/saitama/kitaurawa/"
+  },
+  {
+    name: "個別教室のトライ 大宮駅前校",
+    cat: "chain", catLabel: "大手チェーン",
+    address: "埼玉県さいたま市大宮区桜木町4-252 ユニオンビルディング3F",
+    tel: "",
+    target: "小学生〜高校生",
+    features: "完全マンツーマン指導。学校フォロー・定期テスト対策コースあり。",
+    cost: "月2〜4万円程度（学年・回数による）",
+    note: "",
+    url: "https://www.kobekyo.com/around/saitama/omiya/"
+  },
+  {
+    name: "東京個別指導学院 浦和教室",
+    cat: "chain", catLabel: "大手チェーン",
+    address: "埼玉県さいたま市浦和区高砂2-1-1 明治安田生命浦和ビル4F",
+    tel: "",
+    target: "小学生〜高校生",
+    features: "担当講師制（相性の良い講師を選べる）。1対1または1対2。学校別定期テスト対策。振替自由。",
+    cost: "月2〜4万円程度（学年・回数による）",
+    note: "",
+    url: "https://www.kobetsu.co.jp/school/detail/122/"
+  },
+  {
+    name: "スクールIE（やる気スイッチ）埼玉県さいたま市内各校",
+    cat: "chain", catLabel: "大手チェーン",
+    address: "埼玉県さいたま市内複数教室（浦和・大宮・北浦和など）",
+    tel: "",
+    target: "小学生〜高校生",
+    features: "独自の性格診断に基づく個別指導プラン。学校授業補習から受験対策まで幅広く対応。",
+    cost: "月1.5〜3.5万円程度（学年・回数による）",
+    note: "市内に複数教室あり。最寄りの教室は公式サイトで検索",
+    url: "https://www.schoolie-net.jp/"
+  }
+];
+
+const catConfig = {
+  specialist:  { color: '#e67e22', cls: 'badge-specialist',  label: '発達障害専門' },
+  afterschool: { color: '#27ae60', cls: 'badge-afterschool', label: '放課後デイ（学習型）' },
+  local:       { color: '#2980b9', cls: 'badge-local',       label: '地域密着塾' },
+  chain:       { color: '#7f8c8d', cls: 'badge-chain',       label: '大手チェーン' }
+};
+
+function mapsUrl(addr) {
+  return 'https://maps.google.com/maps?q=' + encodeURIComponent(addr);
+}
+
+function renderCards() {
+  const grid = document.getElementById('cardGrid');
+  grid.innerHTML = '';
+  DATA.forEach(f => {
+    const cc = catConfig[f.cat];
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.dataset.cat = f.cat;
+    card.dataset.search = (f.name + ' ' + f.address + ' ' + f.features + ' ' + f.catLabel).toLowerCase();
+    card.innerHTML = `
+      <span class="badge ${cc.cls}">${f.catLabel}</span>
+      <h2><a href="${f.url}" target="_blank" style="color:#333;text-decoration:none;">${f.name}</a></h2>
+      <div class="info">${f.address}</div>
+      ${f.tel ? '<div class="info">' + f.tel + '</div>' : ''}
+      <div class="info">対象: ${f.target}</div>
+      <div class="features">${f.features}</div>
+      <div class="price-tag">${f.cost}</div>
+      ${f.note ? '<div style="font-size:.72rem;color:#888;margin:4px 0">' + f.note + '</div>' : ''}
+      <div style="margin-top:8px">
+        <a class="btn-map" href="${mapsUrl(f.address)}" target="_blank">Google マップ</a>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function updateCounts() {
+  document.getElementById('cnt-all').textContent = DATA.length;
+  document.getElementById('cnt-sp').textContent = DATA.filter(f => f.cat === 'specialist').length;
+  document.getElementById('cnt-af').textContent = DATA.filter(f => f.cat === 'afterschool').length;
+  document.getElementById('cnt-lo').textContent = DATA.filter(f => f.cat === 'local').length;
+  document.getElementById('cnt-ch').textContent = DATA.filter(f => f.cat === 'chain').length;
+}
+
+let currentFilter = 'all';
+let currentSearch = '';
+
+function applyFilter(cat) {
+  currentFilter = cat;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  event.target.closest('.filter-btn').classList.add('active');
+  applyVisibility();
+}
+function applySearch(q) {
+  currentSearch = q.toLowerCase();
+  applyVisibility();
+}
+function applyVisibility() {
+  document.querySelectorAll('.card').forEach(card => {
+    let catMatch = currentFilter === 'all' || card.dataset.cat === currentFilter;
+    let searchMatch = !currentSearch || card.dataset.search.includes(currentSearch);
+    card.classList.toggle('hidden', !(catMatch && searchMatch));
+  });
+}
+
+renderCards();
+updateCounts();
+</script>
+
+</body>
+</html>

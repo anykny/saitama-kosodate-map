@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>埼玉県さいたま市 発達支援・評価機関マップ（全56件）</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
+      background: #f5f5f5;
+      color: #333;
+      font-size: 14px;
+    }
+    header {
+      background: #1a5276;
+      color: white;
+      padding: 20px 24px;
+    }
+    header h1 { font-size: 1.3rem; margin-bottom: 4px; }
+    header p  { font-size: 0.82rem; opacity: 0.85; }
+
+    .toolbar {
+      background: white;
+      padding: 10px 24px;
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      border-bottom: 1px solid #ddd;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .toolbar span { font-size: 0.82rem; color: #555; margin-right: 2px; }
+    .filter-btn {
+      padding: 4px 12px;
+      border: 1px solid #aaa;
+      border-radius: 16px;
+      background: white;
+      cursor: pointer;
+      font-size: 0.78rem;
+      transition: all 0.2s;
+    }
+    .filter-btn:hover  { background: #eaf0fb; }
+    .filter-btn.active { background: #1a5276; color: white; border-color: #1a5276; }
+    .count-badge {
+      font-size: 0.72rem;
+      background: #eee;
+      border-radius: 8px;
+      padding: 1px 6px;
+      margin-left: 2px;
+    }
+    .filter-btn.active .count-badge { background: rgba(255,255,255,.3); }
+
+    .search-box {
+      margin-left: auto;
+      padding: 5px 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      width: 180px;
+    }
+    .map-all-link {
+      padding: 5px 14px;
+      background: #e8342a;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .container { max-width: 1000px; margin: 16px auto; padding: 0 16px; }
+
+    .notice {
+      background: #fef9e7;
+      border: 1px solid #f0c040;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.8rem;
+      line-height: 1.6;
+      margin-bottom: 14px;
+      color: #555;
+    }
+
+    .summary {
+      display: flex; gap: 12px; flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .summary-card {
+      background: white; border-radius: 8px; padding: 12px 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,.1);
+      text-align: center; min-width: 100px;
+    }
+    .summary-card .num { font-size: 1.6rem; font-weight: bold; color: #1a5276; }
+    .summary-card .label { font-size: 0.75rem; color: #888; }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 12px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,.1);
+      padding: 14px;
+      border-left: 4px solid #ccc;
+      transition: box-shadow 0.2s;
+    }
+    .card:hover { box-shadow: 0 3px 10px rgba(0,0,0,.16); }
+    .card.hidden { display: none; }
+
+    .card[data-cat="療育センター"]           { border-left-color: #d35400; }
+    .card[data-cat="病院"]                  { border-left-color: #8e44ad; }
+    .card[data-cat="クリニック（小児科）"]     { border-left-color: #27ae60; }
+    .card[data-cat="クリニック（児童精神科）"] { border-left-color: #2980b9; }
+    .card[data-cat="クリニック（精神科・心療内科）"] { border-left-color: #7f8c8d; }
+
+    .badge {
+      display: inline-block;
+      font-size: 0.68rem;
+      padding: 1px 8px;
+      border-radius: 10px;
+      color: white;
+      margin-bottom: 6px;
+    }
+    .badge-療育  { background: #d35400; }
+    .badge-病院  { background: #8e44ad; }
+    .badge-小児科 { background: #27ae60; }
+    .badge-児童精神科 { background: #2980b9; }
+    .badge-精神科 { background: #7f8c8d; }
+    .badge-child { background: #e67e22; font-size: 0.65rem; margin-left: 4px; }
+
+    .card h2 { font-size: 0.9rem; margin-bottom: 4px; line-height: 1.35; }
+    .card .info { font-size: 0.78rem; color: #555; margin-bottom: 3px; }
+    .card .tags {
+      display: flex; gap: 4px; flex-wrap: wrap; margin: 6px 0;
+    }
+    .tag {
+      font-size: 0.68rem; padding: 1px 6px;
+      border-radius: 4px; background: #ecf0f1;
+    }
+    .tag-asd  { background: #dcedc8; }
+    .tag-adhd { background: #e1f5fe; }
+    .tag-ld   { background: #fff3e0; }
+    .card .services {
+      font-size: 0.76rem; color: #444;
+      background: #f8f9fa; border-radius: 4px;
+      padding: 4px 8px; margin: 6px 0;
+    }
+    .card .note {
+      font-size: 0.73rem; color: #999;
+      margin-bottom: 8px;
+    }
+    .btn-map {
+      display: inline-block; padding: 4px 12px;
+      background: #e8342a; color: white;
+      border-radius: 5px; text-decoration: none;
+      font-size: 0.76rem;
+    }
+    .btn-map:hover { background: #c0392b; }
+
+    .ref-section {
+      margin-top: 28px; background: white; border-radius: 8px;
+      padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.1);
+    }
+    .ref-section h2 { font-size: 0.95rem; margin-bottom: 10px; color: #1a5276; }
+    .ref-section ul { font-size: 0.82rem; line-height: 2; padding-left: 20px; }
+    .ref-section .import-guide {
+      margin-top: 12px; padding: 10px; background: #eaf4fb;
+      border-radius: 6px; font-size: 0.8rem; line-height: 1.7; color: #444;
+    }
+
+    footer {
+      text-align: center; padding: 20px;
+      font-size: 0.75rem; color: #999;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>埼玉県さいたま市 発達支援・評価 医療機関マップ</h1>
+  <p>埼玉県発達障害医療機関リスト（令和8年2月27日現在）に基づく全56件</p>
+</header>
+
+<div class="toolbar">
+  <span>絞込:</span>
+  <button class="filter-btn active" onclick="applyFilter('all')">すべて<span class="count-badge" id="cnt-all"></span></button>
+  <button class="filter-btn" onclick="applyFilter('child')">小児対応<span class="count-badge" id="cnt-child"></span></button>
+  <button class="filter-btn" onclick="applyFilter('療育センター')">療育<span class="count-badge" id="cnt-ryoiku"></span></button>
+  <button class="filter-btn" onclick="applyFilter('病院')">病院<span class="count-badge" id="cnt-byoin"></span></button>
+  <button class="filter-btn" onclick="applyFilter('クリニック（小児科）')">小児科<span class="count-badge" id="cnt-shonika"></span></button>
+  <button class="filter-btn" onclick="applyFilter('クリニック（児童精神科）')">児童精神科<span class="count-badge" id="cnt-jido"></span></button>
+  <button class="filter-btn" onclick="applyFilter('クリニック（精神科・心療内科）')">精神科等<span class="count-badge" id="cnt-seishin"></span></button>
+  <input type="text" class="search-box" placeholder="名前・住所で検索..." oninput="applySearch(this.value)">
+  <a class="map-all-link" href="https://maps.google.com/maps/search/発達障害+診療+医療機関/@35.87,139.63,12z" target="_blank">Googleマップで検索</a>
+</div>
+
+<div class="container">
+
+  <div class="summary">
+    <div class="summary-card"><div class="num">56</div><div class="label">全機関</div></div>
+    <div class="summary-card"><div class="num" id="sum-child">-</div><div class="label">小児対応</div></div>
+    <div class="summary-card"><div class="num" id="sum-diag">-</div><div class="label">診断可能</div></div>
+    <div class="summary-card"><div class="num" id="sum-test">-</div><div class="label">知能検査可</div></div>
+    <div class="summary-card"><div class="num" id="sum-therapy">-</div><div class="label">療法あり</div></div>
+  </div>
+
+  <div class="notice">
+    <strong>出典：</strong>
+    <a href="https://www.pref.saitama.lg.jp/b0614/iryoukikanrisuto.html" target="_blank">埼玉県 発達障害医療機関リスト</a>
+    （令和8年2月27日現在）より、埼玉県さいたま市分を全件掲載。各医療機関からの情報提供に基づくリストです。
+    受診前に必ず各機関へ直接お問い合わせください。<br>
+    このページに加え、<a href="https://www.city.saitama.lg.jp/002/003/004/003/001/p009014.html" target="_blank">埼玉県さいたま市発達障害者支援センター</a>（048-859-7422）でも相談・紹介が受けられます。
+  </div>
+
+  <div class="card-grid" id="cardGrid"></div>
+
+  <div class="ref-section">
+    <h2>参考リンク</h2>
+    <ul>
+      <li><a href="https://www.pref.saitama.lg.jp/b0614/iryoukikanrisuto.html" target="_blank">埼玉県 発達障害医療機関リスト（公式）</a></li>
+      <li><a href="https://www.city.saitama.lg.jp/002/003/004/003/001/p009014.html" target="_blank">埼玉県さいたま市発達障害者支援センター</a></li>
+      <li><a href="https://www.city.saitama.lg.jp/002/003/004/001/008/p099189.html" target="_blank">埼玉県さいたま市 障害児通所支援事業所（発達障害児サービス提供リスト）</a></li>
+      <li><a href="https://www.city.saitama.lg.jp/002/003/009/001/index.html" target="_blank">総合療育センターひまわり学園</a></li>
+      <li><a href="https://h-navi.jp/support_facility/saitama/regions/3/zihatu" target="_blank">LITALICO発達ナビ 埼玉県さいたま市 児童発達支援事業所一覧</a></li>
+    </ul>
+    <div class="import-guide">
+      <strong>Google My Maps へのインポート方法：</strong><br>
+      1. <a href="https://www.google.com/mymaps" target="_blank">Google My Maps</a> を開く<br>
+      2. 「新しい地図を作成」→「インポート」<br>
+      3. 同梱の <code>facilities.csv</code> をアップロード<br>
+      4. 「住所」列を場所の列に、「名称」列をタイトルに指定<br>
+      5. カテゴリや小児対応でスタイル分けすると見やすくなります
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  埼玉県さいたま市 発達支援・評価機関マップ（全56件）― 2026年3月作成<br>
+  出典: 埼玉県 発達障害医療機関リスト（令和8年2月27日現在）
+</footer>
+
+<script>
+const DATA = [{"no": 1, "name": "かせ心のクリニック ［精神科］ ［心療内科］", "address": "埼玉県さいたま市浦和区北浦和１－１－７　北原ビル２階、５階", "tel": "０４８－８１３－０７０７", "asd": "○", "adhd": "○", "ld": "", "ages": "18歳以上", "services": "診断・知能検査・投薬・親カウンセリング", "note": "プライバシーに配慮した完全予約制です。", "category": "クリニック（精神科・心療内科）", "child_ok": false}, {"no": 2, "name": "言の葉こころクリニック ［精神科］ ［心療内科］ ［児童精神科］", "address": "埼玉県さいたま市浦和区北浦和４－２－５　サクラレジデンス北浦和２Ｆ", "tel": "０４８－７１１－２０８１", "asd": "○", "adhd": "○", "ld": "", "ages": "小学生・中学生・高校生・18歳以上", "services": "診断・心理療法・投薬", "note": "全て予約制です。", "category": "クリニック（児童精神科）", "child_ok": true}, {"no": 3, "name": "イサオクリニック ［精神科］", "address": "埼玉県さいたま市浦和区北浦和４－３－１０　若松家ビル３F", "tel": "０４８－８３４－０１７７", "asd": "○", "adhd": "○", "ld": "", "ages": "高校生・18歳以上", "services": "診断・知能検査・投薬・デイケア", "note": "初診予約が必要です。", "category": "クリニック（精神科・心療内科）", "child_ok": false}, {"no": 4, "name": "松田メンタルクリニック ［精神科］ ［心療内科］ ［内科］", "address": "埼玉県さいたま市浦和区高砂２－１２－１２　あづまビル３Ｆ", "tel": "０４８－８２３－９３３１", "asd": "○", "adhd": "○", "ld": "", "ages": "高校生・18歳以上", "services": "診断・心理療法・投薬", "note": "事前予約が必要です。 コンサータの処方は不可。", "category": "クリニック（精神科・心療内科）", "child_ok": false}, {"no": 5, "name": "メンタルヘルス田井クリニック ［精神科］", "address": "埼玉県さいたま市浦和区高砂３－２－１０　草野高砂ビル６Ｆ", "tel": "０４８－８１６－５５２１", "asd": "○", "adhd": "○", "ld": "", "ages": "18歳以上", "services": "診断", "note": "電話による事前予約が必要。 初診再診完全予約制。 ２０歳以上の成人のみの対応となります。", "category": "クリニック（精神科・心療内科）", "child_ok": false}, {"no": 6, "name": "謙愛クリニック ［精神科］ ［心療内科］", "address": "埼玉県さいたま市浦和区東仲町２５－２９　太陽堂ビル３階", "tel": "０４８－８１１－１２２０", "asd": "○", "adhd": "○", "ld": "", "ages": "", "services": "診断・投薬", "note": "予約制です。診察可能な年齢は２３歳以上です。", "category": "クリニック（精神科・心療内科）", "child_ok": false}, {"no": 7, "name": "白峰クリニック ［精神科］ ［心療内科］", "address": "埼玉県さいたま市浦和区上木崎４－２－２５", "tel": "０４８－８３１－００１２", "asd": "○", "adhd": "○", "ld": "○", "ages": "高校生・18歳以上", "services": "診断・知能検査・作業療法・心理療法・投薬・親カウンセリング・デイケア", "note": "予約制です。 ※詳細は直接お問合せください。", "category": "クリニック（精神科・心療内科）", "child_ok": false}, {"no": 8, "name": "坂井メンタルクリニック ［精神科］ ［心療内科］", "address": "埼玉県さいたま市浦和区仲町１－２－１２　関根ビル４Ｆ", "tel": "０４８－８２４－７３０２", "asd": "○", "adhd": "○", "ld": "", "ages": "18歳以上", "services": "診断・投薬", "note": "初診は事前予約が必要です。", "category": "クリニック（精神科・心療内科）", "child_ok": false}, {"no": 9, "name": "小原クリニック ［精神科］", "address": "埼玉県さいたま市浦和区東高砂町９－１ SUMIDA ONE 本館３Ｆ", "tel": "０４８－８８３－５８６０", "asd": "○", "adhd": "○", "ld": "", "ages": "高校生・18歳以上", "services": "診断・知能検査・心理療法・投薬・親カウンセリング", "note": "事前予約が必要です。", "category": "クリニック（精神科・心療内科）", "child_ok": false}, {"no": 10, "name": "小川クリニック ［心療内科］", "address": "埼玉県さいたま市浦和区高砂１－１３－２　ヤママンビル３階", "tel": "０４８－８３４－５５２５", "asd": "", "adhd": "○", "ld": "", "ages": "18歳以上", "services": "診断・心理療法・投薬", "note": "初診は予約が必要です。", "category": "クリニック（精神科・心療内科）", "child_ok": false}, {"no": 11, "name": "すなおクリニック ［精神科］ ［心療内科］ ［内科］", "address": "埼玉県さいたま市大宮区大門町２丁目９４　福呂屋ビル４階", "tel": "０４８－７８３－５６０７", "asd": "○", "adhd": "○", "ld": "", "ages": "高校生・18歳以上", "services": "診断・知能検査・心理療法・投薬", "note": "事前予約が必要です。", "category": "クリニック（精神科・心療内科）", "child_ok": false}, {"no": 12, "name": "渡辺メンタルクリニック ［精神科］", "address": "埼玉県さいたま市大宮区高鼻町１－３１－１　ＴＯＰＳ大宮ビル６Ｆ", "tel": "０４８－６４７－２３７２", "asd": "○", "adhd": "○", "ld": "", "ages": "18歳以上", "services": "診断・知能検査・心理療法・投薬・親カウンセリング", "note": "電話による事前予約が必要です。", "category": "クリニック（精神科・心療内科）", "child_ok": false}, {"no": 13, "name": "ふせき心療クリニック ［精神科］ ［心療内科］ ［児童精神科］", "address": "埼玉県さいたま市大宮区吉敷町４－２６２－１０　松井ビル５階", "tel": "０４８－６５０－１１１７", "asd": "○", "adhd": "○", "ld": "", "ages": "小学生・中学生・高校生・18歳以上", "services": "診断・知能検査・心理療法・投薬・親カウンセリング", "note": "事前予約が必要です。", "category": "クリニック（児童精神科）", "child_ok": true}, {"no": 14, "name": "大宮駅前ひるまこころクリニック ［精神科］ ［心療内科］", "address": "埼玉県さいたま市大宮区桜木町１－１９７　蓜島ビル４F", "tel": "０４８－７８８－３７５７", "asd": "○", "adhd": "○", "ld": "", "ages": "高校生・18歳以上", "services": "診断・知能検査・投薬・デイケア", "note": "※要相談", "category": "クリニック（精神科・心療内科）", "child_ok": false}, {"no": 15, "name": "大宮こころの診療所 ［精神科］ ［心療内科］", "address": "埼玉県さいたま市大宮区桜木町１－１９３－１　大宮ＹＯＫＯビル５Ｆ", "tel": "０４８－６４１－０２２２", "asd": "○", "adhd": "○", "ld": "", "ages": "高校生・18歳以上", "services": "診断・知能検査・心理療法・投薬・親カウンセリング", "note": "完全予約制。", "category": "クリニック（精神科・心療内科）", "child_ok": false}, {"no": 16, "name": "大宮西口メンタルクリニック ［精神科］ ［心療内科］ ［神経科］", "address": "埼玉県さいたま市大宮区桜木町２－２－１３　第２ユニオンビルディング４階", "tel": "０４８－６３１－１０６０", "asd": "○", "adhd": "○", "ld": "○", "ages": "小学生・中学生・高校生・18歳以上", "services": "診断・投薬", "note": "電話での事前予約が必要です。", "category": "クリニック（精神科・心療内科）", "child_ok": true}, {"no": 17, "name": "大宮さくらクリニック ［精神科］", "address": "埼玉県さいたま市大宮区桜木町２－８－４　山下ビル３Ｆ", "tel": "０４８－８５６－９２７８", "asd": "", "adhd": "○", "ld": "", "ages": "18歳以上", "services": "診断・知能検査・心理療法・投薬", "note": "予約制。電話でお問い合わせ下さい。", "category": "クリニック（精神科・心療内科）", "child_ok": false}, {"no": 18, "name": "ハレこころのクリニック大宮 ［心療内科］ ［精神科］", "address": "埼玉県さいたま市大宮区大門町１－１８－２　ライズＢＬＤ３階", "tel": "０４８－８５６－９８２３", "asd": "", "adhd": "○", "ld": "", "ages": "中学生・高校生・18歳以上", "services": "診断・知能検査・心理療法・投薬・親カウンセリング", "note": "初診、再診ともに事前予約が必要です。", "category": "クリニック（精神科・心療内科）", "child_ok": true}, {"no": 19, "name": "児玉クリニック ［心療内科］ ［精神科］", "address": "埼玉県さいたま市大宮区仲町２－２３－３　大宮仲町センタービル１Ｆ", "tel": "０４８－７８３－３３０２", "asd": "○", "adhd": "○", "ld": "", "ages": "高校生・18歳以上", "services": "診断", "note": "完全予約制です。", "category": "クリニック（精神科・心療内科）", "child_ok": false}, {"no": 20, "name": "大宮心療内科ゆうメンタルクリニック大宮院 ［精神科］", "address": "埼玉県さいたま市大宮区宮町１－５　大宮銀座ビル３Ｆ", "tel": "０４８－６４１－０１１１", "asd": "○", "adhd": "○", "ld": "", "ages": "中学生・高校生・18歳以上", "services": "診断・知能検査・心理療法・投薬", "note": "", "category": "クリニック（精神科・心療内科）", "child_ok": true}, {"no": 21, "name": "こもれびメンタルクリニック大宮 ［心療内科］ ［精神科］", "address": "埼玉県さいたま市大宮区宮町２－１０　シンテイ大宮ビル６階", "tel": "０４８－７２９－６３６５", "asd": "○", "adhd": "○", "ld": "", "ages": "中学生・高校生・18歳以上", "services": "診断・知能検査・心理療法・投薬・親カウンセリング", "note": "事前予約が必要です。", "category": "クリニック（精神科・心療内科）", "child_ok": true}, {"no": 22, "name": "医療法人社団双峰会　大宮むさしのクリニック 〔心療内科〕 〔精神科〕", "address": "埼玉県さいたま市大宮区桜木町２－１９４　YSビル２F", "tel": "０４８－７７９－８００５", "asd": "○", "adhd": "○", "ld": "", "ages": "18歳以上", "services": "診断・知能検査・心理療法・投薬", "note": "事前予約が必要です。", "category": "クリニック（精神科・心療内科）", "child_ok": false}, {"no": 23, "name": "土呂メンタルクリニック ［精神科］", "address": "埼玉県さいたま市北区土呂町１－３３－６", "tel": "０４８－７８２－５８１０", "asd": "○", "adhd": "○", "ld": "", "ages": "中学生・高校生・18歳以上", "services": "診断・知能検査・心理療法・投薬", "note": "予約が必要", "category": "クリニック（精神科・心療内科）", "child_ok": true}, {"no": 24, "name": "医療法人緑潤会　小池内科クリニック ［小児科］", "address": "埼玉県さいたま市北区土呂町２－２３－６", "tel": "０４８－６６２－８６００", "asd": "○", "adhd": "○", "ld": "", "ages": "幼児・小学生・中学生・高校生・18歳以上", "services": "投薬", "note": "", "category": "クリニック（小児科）", "child_ok": true}, {"no": 25, "name": "大宮すずのきクリニック ［精神科］ ［心療内科］", "address": "埼玉県さいたま市北区東大成町２－２５１", "tel": "０４８－６６１－７８８５", "asd": "○", "adhd": "○", "ld": "○", "ages": "高校生・18歳以上", "services": "診断・知能検査・投薬・デイケア", "note": "事前予約が必要です。 高校生は初診時、親同伴にてお願いします。", "category": "クリニック（精神科・心療内科）", "child_ok": false}, {"no": 26, "name": "独立行政法人地域医療機能推進機構さいたま北部医療センター ［小児科］", "address": "埼玉県さいたま市北区宮原町１丁目８５１番地", "tel": "０４８－６６３－１６７１", "asd": "○", "adhd": "○", "ld": "○", "ages": "幼児・小学生・中学生", "services": "診断・知能検査・心理療法・投薬・親カウンセリング", "note": "初診は一般外来への事前予約が必要です。小児科内の専門外来である神経外来・心理外来で対応。", "category": "病院", "child_ok": true}, {"no": 27, "name": "宮原メンタルクリニック ［精神科］", "address": "埼玉県さいたま市北区宮原町３－３７２－２　ファーレマツザワヤ２Ｆ", "tel": "０４８－６６１－９１９９", "asd": "", "adhd": "○", "ld": "", "ages": "18歳以上", "services": "診断・投薬", "note": "事前予約が必要です。 知能検査は新規受付を見合わせています。", "category": "クリニック（精神科・心療内科）", "child_ok": false}, {"no": 28, "name": "医療法人社団彩悠会吉野町ファミリークリニック ［小児科］", "address": "埼玉県さいたま市北区吉野町２－１８９－３", "tel": "０４８－７８３－３７９８", "asd": "○", "adhd": "○", "ld": "", "ages": "幼児・小学生・中学生", "services": "診断・投薬", "note": "事前予約をして下さい。 平日の受診をお願いします。", "category": "クリニック（小児科）", "child_ok": true}, {"no": 29, "name": "イケダ医院 ［精神科］", "address": "埼玉県さいたま市桜区中島４－５－２５", "tel": "０４８－８５２－２１７６", "asd": "", "adhd": "○", "ld": "", "ages": "高校生・18歳以上", "services": "診断・心理療法・投薬", "note": "事前予約が必要です。", "category": "クリニック（精神科・心療内科）", "child_ok": false}, {"no": 30, "name": "埼玉県さいたま市療育センターさくら草 ［精神科］ ［小児科］", "address": "埼玉県さいたま市桜区田島２－１６－２", "tel": "０４８－７１０－５８１１", "asd": "○", "adhd": "○", "ld": "○", "ages": "幼児・小学生", "services": "診断・知能検査・言語療法・作業療法・心理療法・投薬", "note": "事前予約が必要です。 既に他の医療機関等に相談されている場合は、情報提供書をご用意ください。 ※1 小学生の診療についてはご相談ください。 ※2 主治医が必要と判断した場合のみ行います。", "category": "療育センター", "child_ok": true}, {"no": 31, "name": "浦和すずのきクリニック ［精神科］ ［心療内科］ ［神経科］ ［神経内科］", "address": "埼玉県さいたま市桜区田島７－１７－２１", "tel": "０４８－８４５－５５６６", "asd": "", "adhd": "", "ld": "", "ages": "高校生", "services": "投薬・デイケア", "note": "事前予約が必要です。", "category": "クリニック（精神科・心療内科）", "child_ok": false}, {"no": 32, "name": "社会福祉法人シナプス　埼玉精神神経センター ［精神科］", "address": "埼玉県さいたま市中央区本町東６－１１－１", "tel": "０４８－８５７－６８１１", "asd": "○", "adhd": "○", "ld": "", "ages": "中学生・高校生・18歳以上", "services": "診断・知能検査・投薬・デイケア", "note": "要相談 受診には事前予約が必要です。 ※要相談", "category": "クリニック（精神科・心療内科）", "child_ok": true}, {"no": 33, "name": "埼玉県立小児医療センター ［発達外来］", "address": "埼玉県さいたま市中央区新都心１－２", "tel": "０４８－６０１－２２００", "asd": "○", "adhd": "○", "ld": "○", "ages": "幼児", "services": "診断・知能検査・言語療法・作業療法・心理療法・投薬", "note": "依頼により適宜作成 ①紹介予約制です。 ②初診は就学前児童までです。", "category": "病院", "child_ok": true}, {"no": 0, "name": "埼玉県立小児医療センター ［精神保健外来］", "address": "埼玉県さいたま市中央区新都心１－２", "tel": "０４８－６０１－２２００", "asd": "○", "adhd": "○", "ld": "○", "ages": "幼児・小学生", "services": "診断・知能検査・言語療法・作業療法・心理療法・投薬", "note": "依頼により適宜作成 ①紹介予約制です。 ②初診は小学6年生までです。 ※言語療法・作業療法は幼児に限ります。", "category": "病院", "child_ok": true}, {"no": 34, "name": "医療法人社団水府会　かわかみ心療クリニック ［精神科］ ［児童思春期精神科］", "address": "埼玉県さいたま市中央区新都心４－８　新都心ファーストビル３階", "tel": "０４８－６００－５５５５", "asd": "○", "adhd": "○", "ld": "", "ages": "小学生・中学生・高校生・18歳以上", "services": "診断・知能検査・心理療法・投薬・親カウンセリング", "note": "依頼により心理・発達検査の報告書を作成 事前予約が必要です。 トランジッション例に対応します。（紹介状必要）", "category": "クリニック（児童精神科）", "child_ok": true}, {"no": 35, "name": "埼玉県さいたま市総合療育センターひまわり学園 ［精神科］ ［小児科］", "address": "埼玉県さいたま市西区三橋６－１５８７", "tel": "０４８－６２２－１２１８", "asd": "○", "adhd": "○", "ld": "○", "ages": "幼児・小学生", "services": "診断・知能検査・言語療法・作業療法・心理療法・投薬", "note": "事前予約が必要です。 既に他の医療機関等に相談されている場合は、情報提供書をご用意ください。 ※1 小学生の診察については御相談ください。 ※2 主治医が必要と判断した場合のみ行います。", "category": "療育センター", "child_ok": true}, {"no": 36, "name": "社会福祉法人埼玉福祉事業協会　杉の子くりにっく ［精神科］", "address": "埼玉県さいたま市西区塚本町１－１－１", "tel": "０４８－８５６－９３５８", "asd": "○", "adhd": "", "ld": "", "ages": "高校生・18歳以上", "services": "投薬・親カウンセリング", "note": "", "category": "クリニック（精神科・心療内科）", "child_ok": false}, {"no": 37, "name": "メンタルクリニック美波 ［精神科］", "address": "埼玉県さいたま市岩槻区本町３－１６－２－１　MMビル2F", "tel": "０４８－７４９－８３７３", "asd": "○", "adhd": "○", "ld": "", "ages": "中学生・高校生・18歳以上", "services": "診断・知能検査・心理療法・投薬・親カウンセリング", "note": "初診は予約制です。 まずはお電話でお問い合わせ下さい。", "category": "クリニック（精神科・心療内科）", "child_ok": true}, {"no": 38, "name": "療育センターひなぎく ［小児科］", "address": "埼玉県さいたま市岩槻区府内１－８－１", "tel": "０４８－７９６－７０１３", "asd": "○", "adhd": "○", "ld": "", "ages": "幼児・小学生", "services": "診断・知能検査・言語療法・作業療法・心理療法・投薬", "note": "事前予約が必要です。 既に他の医療機関等に相談されている場合は、情報提供書をご用意ください。 ※1 小学生の診察についてはご相談ください。 ※2 主治医が必要と判断した場合のみ行います。", "category": "療育センター", "child_ok": true}, {"no": 39, "name": "医療型障害児入所施設カリヨンの杜 ［小児科］", "address": "埼玉県さいたま市岩槻区馬込２１００", "tel": "０４８－７９７－６９１５", "asd": "○", "adhd": "", "ld": "", "ages": "", "services": "", "note": "重症心身障害や身体障害の方でかつ座位以下の方に限る。", "category": "クリニック（小児科）", "child_ok": false}, {"no": 40, "name": "医療法人片山会かたやまクリニック岩槻院 ［精神科］", "address": "埼玉県さいたま市岩槻区西町1丁目7番29号", "tel": "０４８－８８４－９１８１", "asd": "○", "adhd": "○", "ld": "○", "ages": "中学生・高校生・18歳以上", "services": "診断・知能検査・心理療法・投薬", "note": "〇 事前予約が必要です。", "category": "クリニック（精神科・心療内科）", "child_ok": true}, {"no": 41, "name": "湯澤医院 ［精神科］ ［心療内科］", "address": "埼玉県さいたま市西区西遊馬１２６０－１", "tel": "０４８－６２４－３９７４", "asd": "○", "adhd": "○", "ld": "", "ages": "幼児・小学生・中学生・高校生・18歳以上", "services": "診断・知能検査・心理療法・投薬・親カウンセリング", "note": "", "category": "クリニック（精神科・心療内科）", "child_ok": true}, {"no": 42, "name": "埼玉県さいたま市民医療センター ［小児科］", "address": "埼玉県さいたま市西区島根２９９－１", "tel": "０４８－６２６－００１１", "asd": "○", "adhd": "○", "ld": "", "ages": "幼児・小学生・中学生", "services": "診断・知能検査・投薬・親カウンセリング", "note": "事前予約が必要。紹介制。小児神経外来・心理外来のどちらかになりますので、電話でお問い合わせください。 診断書の作成は定期通院している方のみです。", "category": "病院", "child_ok": true}, {"no": 43, "name": "かたやまクリニック ［精神科］ ［心療内科］", "address": "埼玉県さいたま市緑区美園五丁目４３番地１５", "tel": "０４８－７１１－１６７１", "asd": "○", "adhd": "○", "ld": "○", "ages": "幼児・小学生・中学生・高校生・18歳以上", "services": "診断・知能検査・心理療法・投薬・親カウンセリング・デイケア", "note": "事前予約が必要です。", "category": "クリニック（精神科・心療内科）", "child_ok": true}, {"no": 44, "name": "だるまさんクリニック ［精神科］", "address": "埼玉県さいたま市緑区東浦和５－１８－２２　石崎ビル２０１", "tel": "０４８－７８９－６７２６", "asd": "○", "adhd": "○", "ld": "", "ages": "高校生・18歳以上", "services": "診断・知能検査・心理療法・投薬・親カウンセリング", "note": "事前予約必要です。", "category": "クリニック（精神科・心療内科）", "child_ok": false}, {"no": 45, "name": "めざわこどもクリニック ［小児科］", "address": "埼玉県さいたま市緑区中尾2659ー１３　３F", "tel": "０４８－８７６－５３００", "asd": "○", "adhd": "", "ld": "", "ages": "幼児・小学生", "services": "投薬", "note": "事前相談が必要です。（電話連絡可能） 月曜AM、木曜AM、PMに発達を診察できる医師がいます。", "category": "クリニック（小児科）", "child_ok": true}, {"no": 46, "name": "たんぽぽ子どもクリニック [小児科]", "address": "埼玉県さいたま市南区南浦和１－３３－１５　２F", "tel": "０４８－７６２－８０６６", "asd": "○", "adhd": "○", "ld": "", "ages": "幼児・小学生", "services": "診断", "note": "事前予約が必要です。 ２ヶ月に１回（土曜）不定期。", "category": "クリニック（小児科）", "child_ok": true}, {"no": 47, "name": "浦和別所メンタルクリニック ［精神科］ ［心療内科］", "address": "埼玉県さいたま市南区別所７－１９－２７", "tel": "０４８－８３６－３３３３", "asd": "○", "adhd": "○", "ld": "○", "ages": "幼児・小学生・中学生・高校生・18歳以上", "services": "診断・投薬", "note": "初診の方は事前予約が必要です。 未成年の方は保護者同伴で受診して下さい。", "category": "クリニック（精神科・心療内科）", "child_ok": true}, {"no": 48, "name": "武蔵浦和メンタルクリニック ［精神科］", "address": "埼玉県さいたま市南区別所７－６－８　ライブタワー武蔵浦和２０１", "tel": "０４８－７１０－５０５０", "asd": "○", "adhd": "○", "ld": "", "ages": "高校生・18歳以上", "services": "診断・投薬", "note": "事前予約が必要です。", "category": "クリニック（精神科・心療内科）", "child_ok": false}, {"no": 49, "name": "一般社団法人　南浦和つながりクリニック ［心療内科］ ［精神科］", "address": "埼玉県さいたま市南区南浦和２－２７－１２　アビアント３Ｆ", "tel": "０４８－８８３－４５９１", "asd": "○", "adhd": "○", "ld": "", "ages": "幼児・小学生・中学生・高校生・18歳以上", "services": "診断・知能検査・心理療法・投薬・親カウンセリング", "note": "事前予約が必要です。 ※小児思春期発達相談についてはお問い合わせください。", "category": "クリニック（精神科・心療内科）", "child_ok": true}, {"no": 50, "name": "南浦和東口心療クリニック ［精神科］ ［心療内科］", "address": "埼玉県さいたま市南区南浦和２－３８－７　富士見ビル２Ｆ", "tel": "０４８－７６７－４５５６", "asd": "○", "adhd": "○", "ld": "", "ages": "小学生・中学生・高校生・18歳以上", "services": "診断・投薬", "note": "事前予約が必要です。  ※1 小学校5年生以上", "category": "クリニック（精神科・心療内科）", "child_ok": true}, {"no": 51, "name": "南浦和駅前町田クリニック ［精神科］ ［心療内科］", "address": "埼玉県さいたま市南区南本町２－１－２　プラザマツヤビル３階３０３号", "tel": "０４８－７６４－９７９７", "asd": "○", "adhd": "○", "ld": "", "ages": "小学生・中学生・高校生・18歳以上", "services": "診断・知能検査・心理療法・投薬・デイケア", "note": "事前予約が必要です。 ※1 ADHDの薬物治療対象の方のみ。 ※2 薬物治療対象の方のみ。", "category": "クリニック（精神科・心療内科）", "child_ok": true}, {"no": 52, "name": "医療法人白翔会　浦和神経サナトリウム ［精神科］", "address": "埼玉県さいたま市南区広ヶ谷戸３０１－１", "tel": "０４８－８７３－３１１５", "asd": "○", "adhd": "○", "ld": "", "ages": "中学生・高校生・18歳以上", "services": "診断・投薬・親カウンセリング", "note": "", "category": "病院", "child_ok": true}, {"no": 53, "name": "北戸田駅前まつもとクリニック ［精神科］", "address": "埼玉県さいたま市南区辻８－２３－１４", "tel": "０４８－８３９－５００５", "asd": "○", "adhd": "○", "ld": "", "ages": "高校生・18歳以上", "services": "診断・知能検査・心理療法・投薬・親カウンセリング・デイケア", "note": "事前予約が必要です。", "category": "クリニック（精神科・心療内科）", "child_ok": false}, {"no": 54, "name": "東大宮メンタルクリニック ［精神科］ ［心療内科］", "address": "埼玉県さいたま市見沼区東大宮４－１８－８　新井ビル３Ｆ", "tel": "０４８－６６２－７２１０", "asd": "○", "adhd": "○", "ld": "○", "ages": "中学生・高校生・18歳以上", "services": "診断・知能検査・心理療法・投薬・親カウンセリング", "note": "事前予約が必要です。一部検査は医療保険で扱えないものがあります。", "category": "クリニック（精神科・心療内科）", "child_ok": true}, {"no": 55, "name": "医療法人社団輔仁会　大宮厚生病院 ［精神科］", "address": "埼玉県さいたま市見沼区片柳１", "tel": "０５７０－０５０－０３８", "asd": "○", "adhd": "○", "ld": "", "ages": "高校生・18歳以上", "services": "診断・投薬", "note": "受診には事前予約が必要です。", "category": "病院", "child_ok": false}];
+
+const catColors = {
+  '療育センター': '#d35400',
+  '病院': '#8e44ad',
+  'クリニック（小児科）': '#27ae60',
+  'クリニック（児童精神科）': '#2980b9',
+  'クリニック（精神科・心療内科）': '#7f8c8d'
+};
+const catBadgeClass = {
+  '療育センター': 'badge-療育',
+  '病院': 'badge-病院',
+  'クリニック（小児科）': 'badge-小児科',
+  'クリニック（児童精神科）': 'badge-児童精神科',
+  'クリニック（精神科・心療内科）': 'badge-精神科'
+};
+
+function mapsUrl(addr) {
+  return 'https://maps.google.com/maps?q=' + encodeURIComponent(addr);
+}
+
+function renderCards() {
+  const grid = document.getElementById('cardGrid');
+  grid.innerHTML = '';
+  DATA.forEach((f, i) => {
+    const tags = [];
+    if (f.asd)  tags.push('<span class="tag tag-asd">ASD</span>');
+    if (f.adhd) tags.push('<span class="tag tag-adhd">ADHD</span>');
+    if (f.ld)   tags.push('<span class="tag tag-ld">LD</span>');
+
+    const childBadge = f.child_ok ? '<span class="badge badge-child">小児可</span>' : '';
+
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.dataset.cat = f.category;
+    card.dataset.child = f.child_ok ? '1' : '0';
+    card.dataset.search = (f.name + ' ' + f.address + ' ' + f.services).toLowerCase();
+    card.innerHTML = `
+      <span class="badge ${catBadgeClass[f.category] || ''}">${f.category}</span>${childBadge}
+      <h2>${f.name}</h2>
+      <div class="info">${f.address}</div>
+      ${f.tel ? '<div class="info">' + f.tel + '</div>' : ''}
+      <div class="info">対象: ${f.ages || '要確認'}</div>
+      <div class="tags">${tags.join('')}</div>
+      ${f.services ? '<div class="services">' + f.services + '</div>' : ''}
+      ${f.note ? '<div class="note">' + f.note + '</div>' : ''}
+      <a class="btn-map" href="${mapsUrl(f.address)}" target="_blank">Google マップ</a>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function updateCounts() {
+  document.getElementById('cnt-all').textContent = DATA.length;
+  document.getElementById('cnt-child').textContent = DATA.filter(f => f.child_ok).length;
+  document.getElementById('cnt-ryoiku').textContent = DATA.filter(f => f.category === '療育センター').length;
+  document.getElementById('cnt-byoin').textContent = DATA.filter(f => f.category === '病院').length;
+  document.getElementById('cnt-shonika').textContent = DATA.filter(f => f.category === 'クリニック（小児科）').length;
+  document.getElementById('cnt-jido').textContent = DATA.filter(f => f.category === 'クリニック（児童精神科）').length;
+  document.getElementById('cnt-seishin').textContent = DATA.filter(f => f.category === 'クリニック（精神科・心療内科）').length;
+
+  document.getElementById('sum-child').textContent = DATA.filter(f => f.child_ok).length;
+  document.getElementById('sum-diag').textContent = DATA.filter(f => f.services.includes('診断')).length;
+  document.getElementById('sum-test').textContent = DATA.filter(f => f.services.includes('知能検査')).length;
+  document.getElementById('sum-therapy').textContent = DATA.filter(f =>
+    f.services.includes('心理療法') || f.services.includes('言語療法') || f.services.includes('作業療法')
+  ).length;
+}
+
+let currentFilter = 'all';
+let currentSearch = '';
+
+function applyFilter(cat) {
+  currentFilter = cat;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  event.target.closest('.filter-btn').classList.add('active');
+  applyVisibility();
+}
+
+function applySearch(q) {
+  currentSearch = q.toLowerCase();
+  applyVisibility();
+}
+
+function applyVisibility() {
+  document.querySelectorAll('.card').forEach(card => {
+    let catMatch = currentFilter === 'all' ||
+      (currentFilter === 'child' && card.dataset.child === '1') ||
+      card.dataset.cat === currentFilter;
+    let searchMatch = !currentSearch || card.dataset.search.includes(currentSearch);
+    card.classList.toggle('hidden', !(catMatch && searchMatch));
+  });
+}
+
+renderCards();
+updateCounts();
+</script>
+
+</body>
+</html>
